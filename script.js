@@ -1,14 +1,21 @@
 document.addEventListener('DOMContentLoaded', () => {
     const messageInput = document.getElementById('messageInput');
     const titleInput = document.getElementById('titleInput');
-    const passwordInput = document.getElementById('passwordInput'); // ✅ NEW
+    const passwordInput = document.getElementById('passwordInput');
     const sendBtn = document.getElementById('sendBtn');
     const statusMessage = document.getElementById('statusMessage');
+
+    // 🔐 Check if password already saved
+    let savedPassword = localStorage.getItem("edith_password");
+
+    if (savedPassword) {
+        passwordInput.style.display = "none";
+    }
 
     sendBtn.addEventListener('click', async () => {
         const text = messageInput.value.trim();
         const title = titleInput.value.trim();
-        const password = passwordInput.value.trim(); // ✅ NEW
+        let password = savedPassword || passwordInput.value.trim();
 
         if (!text) {
             showStatus('Please enter a message.', 'error');
@@ -31,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({
                     message: text,
                     title,
-                    password // ✅ SEND PASSWORD
+                    password
                 })
             });
 
@@ -41,8 +48,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 messageInput.value = '';
                 titleInput.value = '';
                 showStatus('Message sent!', 'success');
+
+                // 🔐 Save password after first success
+                if (!savedPassword) {
+                    localStorage.setItem("edith_password", password);
+                    passwordInput.style.display = "none";
+                    savedPassword = password;
+                }
+
             } else {
-                showStatus('Wrong password or failed.', 'error');
+                showStatus('Wrong password.', 'error');
             }
 
         } catch (err) {
