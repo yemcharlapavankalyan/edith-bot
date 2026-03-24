@@ -3,29 +3,41 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Edith Bot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edith Bot | Secure Sender</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
     <div class="container">
-        <h2>Edith Message Sender</h2>
+        <h2>Edith Bot</h2>
 
-        <!-- 🔐 Password Field -->
-        <input type="password" id="passwordInput" placeholder="Enter password">
+        <div class="input-group">
+            <input type="text" id="titleInput" placeholder="Subject / Title (optional)">
+        </div>
 
-        <!-- Title -->
-        <input type="text" id="titleInput" placeholder="Title (optional)">
+        <div class="input-group">
+            <textarea id="messageInput" placeholder="Type your message here..."></textarea>
+        </div>
 
-        <!-- Message -->
-        <textarea id="messageInput" placeholder="Enter your message"></textarea>
+        <button id="sendBtn">Send Message</button>
 
-        <!-- Send Button -->
-        <button id="sendBtn">Send</button>
-
-        <!-- Status -->
         <p id="statusMessage" class="status"></p>
+    </div>
+
+    <!-- 🔐 Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeModal">&times;</span>
+            <h3>Authentication</h3>
+            <p>Enter your application password</p>
+            
+            <input type="password" id="modalPasswordInput" placeholder="••••••••">
+            <p id="modalErrorMessage" class="error-text"></p>
+            
+            <button id="modalSubmitBtn">Verify & Send</button>
+        </div>
     </div>
 
     <script src="script.js"></script>
