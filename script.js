@@ -1,15 +1,22 @@
 document.addEventListener('DOMContentLoaded', () => {
     const messageInput = document.getElementById('messageInput');
     const titleInput = document.getElementById('titleInput');
+    const passwordInput = document.getElementById('passwordInput'); // ✅ NEW
     const sendBtn = document.getElementById('sendBtn');
     const statusMessage = document.getElementById('statusMessage');
 
     sendBtn.addEventListener('click', async () => {
         const text = messageInput.value.trim();
         const title = titleInput.value.trim();
+        const password = passwordInput.value.trim(); // ✅ NEW
 
         if (!text) {
             showStatus('Please enter a message.', 'error');
+            return;
+        }
+
+        if (!password) {
+            showStatus('Enter password.', 'error');
             return;
         }
 
@@ -21,7 +28,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ message: text, title })
+                body: JSON.stringify({
+                    message: text,
+                    title,
+                    password // ✅ SEND PASSWORD
+                })
             });
 
             const data = await response.json();
@@ -31,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 titleInput.value = '';
                 showStatus('Message sent!', 'success');
             } else {
-                showStatus('Failed to send.', 'error');
+                showStatus('Wrong password or failed.', 'error');
             }
 
         } catch (err) {

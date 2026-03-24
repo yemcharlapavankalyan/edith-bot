@@ -1,26 +1,34 @@
 export default async function handler(req, res) {
-    // Only allow POST
+    // Allow only POST requests
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    const { message, title } = req.body;
+    const { message, title, password } = req.body;
 
+    // 🔐 Password protection
+    if (password !== process.env.APP_PASSWORD) {
+        return res.status(401).json({ success: false, error: "Unauthorized" });
+    }
+
+    // Validate message
     if (!message) {
         return res.status(400).json({ error: "Message required" });
     }
 
+    // Timestamp
     const time = new Date().toLocaleString();
 
-    // Format message
+    // Default format
     let formattedMessage = `📩 ${title || "New Entry"}\n🕒 ${time}\n\n${message}`;
 
-    // If it's a link
+    // If message is a link
     if (message.startsWith("http")) {
         formattedMessage = `🔗 Link\n🕒 ${time}\n\n${message}`;
     }
 
     try {
+        // Send to Telegram
         const telegramResponse = await fetch(
             `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendMessage`,
             {
@@ -37,15 +45,15 @@ export default async function handler(req, res) {
 
         const data = await telegramResponse.json();
 
-        // Optional: check Telegram success
+        // Check Telegram success
         if (!data.ok) {
             return res.status(500).json({ success: false, error: data });
         }
 
         return res.status(200).json({ success: true });
 
-    } catch (err) {
-        console.error(err);
+    } catch (error) {
+        console.error("Error:", error);
         return res.status(500).json({ success: false });
     }
 }
